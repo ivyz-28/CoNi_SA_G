@@ -21,7 +21,7 @@ import os
 
 single_atom = None # Replace with desired single atom symbol
 
-struct = Structure.from_file('')
+struct = Structure.from_file('f./CoNi.cif')
 
 predictor = pretrained_mlip.get_predict_unit("uma-s-1p2", device="cpu") # Change to cuda if running on gpu
 calc = FAIRChemCalculator(predictor, task_name="oc20")
