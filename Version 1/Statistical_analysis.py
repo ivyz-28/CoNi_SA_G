@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture
 
 metals = [] # List all metals to carry out statistical analysis for 
-out_direc = "" # Replace with desired output directory
-os.makedirs(f'{out_direct}/Fairchem Excel', exist_ok=True)
-os.makedirs(f'{out_direct}/Fairchem Plots', exist_ok=True)
+out_direc = "." # Replace with desired output directory
+os.makedirs(f'{out_direc}/Fairchem Excel', exist_ok=True)
+os.makedirs(f'{out_direc}/Fairchem Plots', exist_ok=True)
 
 def split_label(s):
     match = re.match(r"([a-zA-Z]+)(\d+)", s)
@@ -20,7 +20,7 @@ def split_label(s):
         raise ValueError(f"'{s}' doesn't match the expected letters+numbers pattern")
     return match.group(1), match.group(2)
 
-df1 = pd.read_excel(f'',usecols = ['E_catalyst','Energy'])
+df1 = pd.read_excel(f'./Single Atom Energies.xlsx',usecols = ['E_catalyst','Energy'])
 df1.itertuples()
 sa = np.array([x for x in df1.E_catalyst if not pd.isnull(x)])
 energy = np.array([x for x in df1.Energy if not pd.isnull(x)])
@@ -99,10 +99,10 @@ for metal in metals:
     base_energy = min(energy_coh_list)
     ws.cell(row = 2, column = 9, value = base_energy)
 
-    wb.save(filename = f"{out_direct}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
+    wb.save(filename = f"{out_direc}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
     wb.close()
 
-    df = pd.read_excel(f"{out_direct}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx", usecols=['E_H', 'E_catalyst', 'E_coh'])
+    df = pd.read_excel(f"{out_direc}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx", usecols=['E_H', 'E_catalyst', 'E_coh'])
     df.itertuples()
     energy_H = np.array([x for x in df.E_H if not pd.isnull(x)])
     energy_no_H = np.array([x for x in df.E_catalyst if not pd.isnull(x)])
@@ -112,7 +112,7 @@ for metal in metals:
     partition = sum(exponential)
     probabilities = exponential / partition
 
-    wb = openpyxl.load_workbook(f"{out_direct}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
+    wb = openpyxl.load_workbook(f"{out_direc}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
     ws = wb.active
 
     for i, probability in enumerate(probabilities):
@@ -123,7 +123,7 @@ for metal in metals:
         ws.cell(row = i+2, column = 11, value = value)
     ads_final = sum(E_ads * probabilities)
     ws.cell(row = 2, column = 12, value = ads_final)
-    wb.save(filename = f"{out_direct}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
+    wb.save(filename = f"{out_direc}/Fairchem Excel/{metal} Fairchem Lattice Energies.xlsx")
     wb.close()
 
     idx = np.random.choice(
@@ -173,7 +173,8 @@ for metal in metals:
     ax.set_ylabel('Probability', fontsize=12)
     ax.set_title(f'{metal} Catalyst — Adsorption Energy Distribution (Fairchem)', fontsize=13)
     plt.tight_layout()
-    plt.savefig(f'{out_direct}/Fairchem Plots/{metal}.pdf', dpi=300, bbox_inches='tight')
-    plt.savefig(f'{out_direct}/Fairchem Plots/{metal}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'{out_direc}/Fairchem Plots/{metal}.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig(f'{out_direc}/Fairchem Plots/{metal}.png', dpi=300, bbox_inches='tight')
     plt.close()
+    print(f'Statistical Analysis Completed for {metal}. Plots and excel spreadsheet saved into {out_direc}/Fairchem Plots/')
                 
