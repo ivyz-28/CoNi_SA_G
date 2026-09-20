@@ -119,7 +119,7 @@ for doc in all:
         todo_2.append(doc)
 print(len(todo_2))
 for i in todo_2:
-    i_copy = Structure.from_file(f'/Users/ivanzhang/Documents/Python/{single_atom} Fairchem/{i}').copy()
+    i_copy = Structure.from_file(f'./{single_atom} Fairchem/{i}').copy()
     ase_atoms = AseAtomsAdaptor.get_atoms(i_copy)
     ase_atoms.calc = calc
     dyn = BFGS(
